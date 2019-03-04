@@ -39,5 +39,34 @@ server.post('/api/register', (req, res) => {
     });
 });
 
+// LOG-IN
+
+server.post('/api/login', (req, res) => {
+  let { username, password } = req.body;
+
+  Users.findBy({ username })
+    .first()
+    .then(user => {
+      if (user && bcrypt.compareSync(password, user.password)) {
+        res
+          .status(200)
+          .json({
+            message: `Welcome, ${user.username}! You are now logged in!`
+          });
+      } else {
+        res
+          .status(401)
+          .json({
+            message: 'YOU SHALL NOT PASS!!'
+          });
+      }
+    })
+    .catch(error => {
+      res
+        .status(500)
+        .json(error);
+    });
+});
+
 const port = 5000;
 server.listen(port, () => console.log(`\n***** Running on port ${port} *****\n`));
