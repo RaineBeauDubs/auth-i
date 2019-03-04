@@ -19,6 +19,8 @@ server.get('/', (req, res) => {
   res.send("Welcome to Auth-I!")
 });
 
+
+
 // REGISTER
 
 server.post('/api/register', (req, res) => {
@@ -67,6 +69,50 @@ server.post('/api/login', (req, res) => {
         .json(error);
     });
 });
+
+// RESTRICTED MIDDLEWARE
+
+function restricted (req, res, next) {
+  const { username, password } = req.headers 
+
+  if ( username && password ) {
+    Users.findBy({ username })
+      .first()
+      .then(user => {
+        if (user && bcrypt.compareSync(password, user.password)) {
+          next();
+        } else {
+          res
+            .status(401)
+            .json({
+              message: 'YOU SHALL NOT PASS!!'
+            })
+        }
+      })
+      .catch(error => {
+        res
+          .status(500)
+          .json(error)
+      })
+  } else {
+    res
+      .status(400)
+      .json({
+        message: 'Did you forget something?'
+      })
+  }
+}
+
+// GET USERS (RESTRICTED)
+
+server.get('/api/users', restricted, async(req, res) => {
+  try {
+    const users = await Users.find()
+    res.json(users)
+  } catch (error) {
+    res.send(error)
+  }
+})
 
 const port = 5000;
 server.listen(port, () => console.log(`\n***** Running on port ${port} *****\n`));
