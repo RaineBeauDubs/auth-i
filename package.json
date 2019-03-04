@@ -1,0 +1,14 @@
+{
+  "name": "auth-i",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:RaineBeauDubs/auth-i.git",
+  "author": "Raine Wallace <rainebeaudubs@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "knex": "^0.16.3",
+    "nodemon": "^1.18.10"
+  }
+}
