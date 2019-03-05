@@ -39,11 +39,12 @@ server.get('/', (req, res) => {
 
 server.post('/api/register', (req, res) => {
   let user = req.body;
-  const hash = bcrypt.hashSync(user.password, 16)
+  const hash = bcrypt.hashSync(user.password, 12)
   user.password = hash
 
   Users.add(user)
     .then(saved => {
+      req.session.user = saved;
       res
         .status(201)
         .json(saved);
@@ -148,6 +149,22 @@ server.get('/users', restricted, async(req, res) => {
     res.send(error);
   }
 });
+
+server.get('/api/logout', (req, res) => {
+  if (req.session) {
+    req.session.destroy(error => {
+        if (error) {
+          res.send('Lol you are stuck here forever.');
+        } else{
+          res.send('Byeeeee!');
+        }
+    });
+  } else {
+    res.end();
+  }
+});
+
+
 
 const port = 5000;
 server.listen(port, () => console.log(`\n***** Running on port ${port} *****\n`));
